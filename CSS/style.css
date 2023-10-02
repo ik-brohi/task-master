@@ -1,0 +1,102 @@
+/* Custom CSS for TaskMaster */
+
+/* Style for the navigation bar */
+.navbar {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+/* Style for the task card container */
+.task-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    background-color: #fff;
+}
+
+/* Style for task card header */
+.task-card-header {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 12px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-weight: bold;
+}
+
+/* Style for task card content */
+.task-card-content {
+    padding: 20px;
+}
+
+/* Style for labels */
+.label {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Style for the developer information */
+.developer-info {
+    font-style: italic;
+    color: #777;
+}
+
+/* Style for urgency */
+.urgent {
+    color: #FF5733; /* Orange Red */
+    font-weight: bold;
+}
+
+/* Style for size */
+.large {
+    color: #337AB7; /* Royal Blue */
+    font-weight: bold;
+}
+
+/* Style for the Create Task button */
+.btn-primary {
+    background-color: #007BFF;
+    border-color: #007BFF;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    color: #fff;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Style for form input fields */
+.form-control {
+    border-radius: 8px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    width: 100%; /* Adjust the width as needed */
+}
+
+/* Style for form select elements */
+.form-control:focus {
+    border-color: #007BFF;
+    box-shadow: none;
+    color: #495057; /* Color for the selected text */
+}
+
+/* Style for form select elements when not focused */
+.form-control::placeholder {
+    color: #ccc; /* Color for the hint text */
+}
+
+/* Add some spacing for better readability */
+.mt-4 {
+    margin-top: 2rem;
+}
+
+/* Center the form on larger screens */
+@media (min-width: 768px) {
+    .task-form {
+        text-align: center;
+    }
+}

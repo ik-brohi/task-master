@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskMaster - Task Management</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="CSS/style.css">
+  <style>
+    /* Custom CSS for TaskMaster */
+
+    /* Style for the navigation bar */
+    .navbar {
+      background-color: #007BFF;
+      color: #fff;
+    }
+
+    /* Style for the task card container */
+    .task-card {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style for task card header */
+    .task-card-header {
+      background-color: #007BFF;
+      color: #fff;
+      padding: 10px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+
+    /* Style for task card content */
+    .task-card-content {
+      padding: 20px;
+    }
+
+    /* Style for labels */
+    .label {
+      font-weight: bold;
+    }
+
+    /* Style for the developer information */
+    .developer-info {
+      font-style: italic;
+    }
+
+    /* Style for urgency */
+    .urgent {
+      color: red;
+    }
+
+    /* Style for size */
+    .large {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">TaskMaster</a>
+</nav>
+
+<div class="container mt-4">
+  <!-- Input form for creating tasks -->
+  <form id="taskForm">
+    <div class="form-group">
+      <label for="taskName">Task Name</label>
+      <input type="text" class="form-control" id="taskName" placeholder="Enter task name">
+    </div>
+    <div class="form-group">
+      <label for="taskDescription">Task Description</label>
+      <textarea class="form-control" id="taskDescription" rows="3" placeholder="Enter task description"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="urgency">Urgency</label>
+      <select class="form-control" id="urgency">
+        <option value="Urgent">Urgent</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="size">Size</label>
+      <select class="form-control" id="size">
+        <option value="Large">Large</option>
+        <option value="Medium">Medium</option>
+        <option value="Small">Small</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="developerName">Developer Name</label>
+      <input type="text" class="form-control" id="developerName" placeholder="Enter developer name">
+    </div>
+    <div class="form-group">
+      <label for="developerEmail">Developer Email</label>
+      <input type="email" class="form-control" id="developerEmail" placeholder="Enter developer email">
+    </div>
+    <button type="submit" class="btn btn-primary">Create Task</button>
+  </form>
+
+  <!-- Task cards will be dynamically populated here -->
+  <div class="row mt-4" id="taskList">
+
+  </div>
+</div>
+
+<!-- Modal for editing a task -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Edit task form -->
+        <form id="editTaskForm">
+          <div class="form-group">
+            <label for="editTaskName">Task Name</label>
+            <input type="text" class="form-control" id="editTaskName" placeholder="Enter task name">
+          </div>
+          <div class="form-group">
+            <label for="editTaskDescription">Task Description</label>
+            <textarea class="form-control" id="editTaskDescription" rows="3" placeholder="Enter task description"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="editUrgency">Urgency</label>
+            <select class="form-control" id="editUrgency">
+              <option value="Urgent">Urgent</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editSize">Size</label>
+            <select class="form-control" id="editSize">
+              <option value="Large">Large</option>
+              <option value="Medium">Medium</option>
+              <option value="Small">Small</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editDeveloperName">Developer Name</label>
+            <input type="text" class="form-control" id="editDeveloperName" placeholder="Enter developer name">
+          </div>
+          <div class="form-group">
+            <label for="editDeveloperEmail">Developer Email</label>
+            <input type="email" class="form-control" id="editDeveloperEmail" placeholder="Enter developer email">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveEditButton">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Function to create a task card
+  function createTaskCard(task) {
+    const taskCard = document.createElement("div");
+    taskCard.classList.add("col-md-4");
+
+    taskCard.innerHTML = `
+        <div class="task-card" data-task-id="${task.id}">
+            <div class="task-card-header">
+                Task #${task.id}
+            </div>
+            <div class="task-card-content">
+                <p class="label-task-name"><span class="label">Task Name:</span> ${task.taskName}</p>
+                <p class="label-task-description"><span class="label">Task Description:</span> ${task.taskDescription}</p>
+                <p><span class="label">Urgency:</span> <span class="urgent">${task.urgency}</span></p>
+                <p><span class="label">Size:</span> <span class="large">${task.size}</span></p>
+                <div class="developer-info">
+                    <p class="label-developer-name"><span class="label">Assigned Developer:</span> ${task.developerName}</p>
+                    <p class="label-developer-email"><span class="label">Developer Email:</span> ${task.developerEmail}</p>
+                </div>
+                <button class="btn btn-primary edit-btn" data-task-id="${task.id}">Edit</button>
+                <button class="btn btn-danger delete-btn" data-task-id="${task.id}">Delete</button>
+            </div>
+        </div>
+    `;
+
+    // Attach event listeners for edit and delete buttons
+    const editButton = taskCard.querySelector(".edit-btn");
+    const deleteButton = taskCard.querySelector(".delete-btn");
+
+    editButton.addEventListener("click", handleEditTask);
+    deleteButton.addEventListener("click", handleDeleteTask);
+
+    return taskCard;
+  }
+
+  // Function to handle form submission
+  function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const taskName = document.getElementById("taskName").value;
+    const taskDescription = document.getElementById("taskDescription").value;
+    const urgency = document.getElementById("urgency").value;
+    const size = document.getElementById("size").value;
+    const developerName = document.getElementById("developerName").value;
+    const developerEmail = document.getElementById("developerEmail").value;
+
+    // Check if any field is empty
+    if (!taskName || !taskDescription || !urgency || !size || !developerName || !developerEmail) {
+      alert("Please fill out all the task details.");
+      return;
+    }
+
+    const task = {
+      id: Date.now(),
+      taskName,
+      taskDescription,
+      urgency,
+      size,
+      developerName,
+      developerEmail
+    };
+
+    const taskList = document.getElementById("taskList");
+    const taskCard = createTaskCard(task);
+    taskList.appendChild(taskCard);
+
+    // Store the updated task list in sessionStorage
+    const tasks = JSON.parse(sessionStorage.getItem('tasks')) || [];
+    tasks.push(task);
+    sessionStorage.setItem('tasks', JSON.stringify(tasks));
+
+    // Reset the form
+    document.getElementById("taskForm").reset();
+  }
+
+  // Attach form submission event handler
+  document.getElementById("taskForm").addEventListener("submit", handleFormSubmit);
+
+  // Function to handle editing a task
+  function handleEditTask(event) {
+    const taskId = event.target.getAttribute("data-task-id");
+    const taskCard = event.target.closest(".task-card");
+    const taskName = taskCard.querySelector(".label-task-name").textContent;
+    const taskDescription = taskCard.querySelector(".label-task-description").textContent;
+    const urgency = taskCard.querySelector(".urgent").textContent;
+    const size = taskCard.querySelector(".large").textContent;
+    const developerName = taskCard.querySelector(".label-developer-name").textContent;
+    const developerEmail = taskCard.querySelector(".label-developer-email").textContent;
+
+    // Populate the modal fields with the task data
+    document.getElementById("editTaskName").value = taskName;
+    document.getElementById("editTaskDescription").value = taskDescription;
+    document.getElementById("editUrgency").value = urgency;
+    document.getElementById("editSize").value = size;
+    document.getElementById("editDeveloperName").value = developerName;
+    document.getElementById("editDeveloperEmail").value = developerEmail;
+
+    // Set a custom attribute on the "Save" button to store the taskId
+    document.getElementById("saveEditButton").setAttribute("data-task-id", taskId);
+
+    // Show the modal
+    $("#editTaskModal").modal("show");
+  }
+
+  // Function to handle deleting a task
+  function handleDeleteTask(event) {
+    const taskId = event.target.getAttribute("data-task-id");
+    const taskCard = event.target.closest(".task-card");
+
+    // Remove the task card from the DOM
+    taskCard.remove();
+
+    // Remove the task from sessionStorage
+    const tasks = JSON.parse(sessionStorage.getItem('tasks')) || [];
+    const updatedTasks = tasks.filter(task => task.id !== parseInt(taskId, 10));
+    sessionStorage.setItem('tasks', JSON.stringify(updatedTasks));
+  }
+
+  // Event listener for the "Save" button in the edit modal
+  document.getElementById("saveEditButton").addEventListener("click", function () {
+    const taskId = this.getAttribute("data-task-id");
+    const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
+
+    // Update the task data in the card
+    taskCard.querySelector(".label-task-name").textContent = document.getElementById("editTaskName").value;
+    taskCard.querySelector(".label-task-description").textContent = document.getElementById("editTaskDescription").value;
+    taskCard.querySelector(".urgent").textContent = document.getElementById("editUrgency").value;
+    taskCard.querySelector(".large").textContent = document.getElementById("editSize").value;
+    taskCard.querySelector(".label-developer-name").textContent = document.getElementById("editDeveloperName").value;
+    taskCard.querySelector(".label-developer-email").textContent = document.getElementById("editDeveloperEmail").value;
+
+    // Close the modal
+    $("#editTaskModal").modal("hide");
+  });
+
+  // Function to load tasks from sessionStorage and populate the page
+  function loadTasksFromStorage() {
+    const taskList = document.getElementById("taskList");
+    const tasks = JSON.parse(sessionStorage.getItem('tasks')) || [];
+
+    tasks.forEach((task) => {
+      const taskCard = createTaskCard(task);
+      taskList.appendChild(taskCard);
+    });
+  }
+
+  // Call the function to load tasks when the page loads
+  loadTasksFromStorage();
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
